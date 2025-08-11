@@ -1,0 +1,2 @@
+# geojson2html
+みんなで石仏調査のGeoJSONからアーカイブ用HTMLファイルを生成
