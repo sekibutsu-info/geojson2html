@@ -65,7 +65,7 @@ for feature in geojson_data.get('features', []):
             lst_comments = value
         elif key == 'ref_url':
             lst_ref_urls = value
-        elif key == 'model_url':
+        elif key == '3D_model_url':
             lst_model_urls = value
         elif key == 'tag':
             lst_tags = value
