@@ -8,12 +8,13 @@ with open('stone_db.geojson', 'r', encoding='utf-8') as f:
 
 output_dir = Path('archives')
 output_dir.mkdir(exist_ok=True)
+s_url = 'https://archives.sekibutsu.info/'
 
 for feature in geojson_data.get('features', []):
     properties = feature.get('properties', {})
     geometry = feature.get('geometry', {})
 
-    feature_id = properties.get('id')
+    feature_id = str(properties.get('id'))
 
     html_content = [
         '<!DOCTYPE html>',
@@ -24,6 +25,10 @@ for feature in geojson_data.get('features', []):
 
     s_place = s_photo_date = s_built_year = s_built_year_ce = s_figure = s_principal = s_absence = ''
     lst_types = lst_images = lst_projects = lst_sameas = lst_comments = lst_ref_urls = lst_model_urls = lst_tags = []
+
+    lst_coord = geometry.get('coordinates')
+    s_lon = str(lst_coord[0])
+    s_lat = str(lst_coord[1])
 
     for key, value in properties.items():
         if key == 'contributor':
@@ -73,11 +78,17 @@ for feature in geojson_data.get('features', []):
     if s_place:
          s_address2 = s_address + ' ' + str(s_place)
     s_title = s_address2 + 'の' + ','.join(lst_types) + ' - みんなで石仏調査アーカイブ'
-    html_content.append('<title>' + s_title + '</title>')
 
     html_content.extend([
         '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+
+        '<meta name="twitter:card" content="summary" />',
+        '<meta property="og:url" content="' + s_url + feature_id + '.html" />',
+        '<meta property="og:image" content="' + s_url + 'images/' +lst_images[0] + '" />',
+        '<meta property="og:title" content="' + s_title + '" />',
+
         '<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">',
+        '<link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />',
         '<script src="js/bootstrap.bundle.min.js"></script>',
         '<script src="js/jquery-3.6.1.js"></script>',
         '<script>',
@@ -86,6 +97,9 @@ for feature in geojson_data.get('features', []):
         '$(\'#photo-popup-body\').html(html);',
         '$(\'#photo-popup\').modal(\'show\');',
         '}\r</script>',
+
+        '<title>' + s_title + '</title>',
+
         '</head>\r<body style="padding:10px;">',
         '<div id="photo-popup" class="modal fade hidden">',
         '<div class="modal-dialog modal-dialog-centered">',
@@ -95,6 +109,9 @@ for feature in geojson_data.get('features', []):
         '<p>みんなで石仏調査アーカイブ</p>\r<hr>',
     ])
 
+    html_content.append('Permalink：<a href="' + s_url + feature_id + '.html">' + s_url + feature_id + '</a>' +
+                        '（<a href="https://map.sekibutsu.info/?x=' + s_lon + '&y=' + s_lat + '&z=18&e=' + feature_id + '" rel="nofollow">' +
+                        '<i class="fa fa-map-marker" aria-hidden="true"></i> マップ</a>）<br>')
     html_content.append('データ作成者：' + s_contributor + '<br>')
     html_content.append('データ作成日：' + s_created_at + '<br>')
 
@@ -109,8 +126,8 @@ for feature in geojson_data.get('features', []):
                         ' (Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>)</div>\r</div>')
     if s_photo_date:
         html_content.append('写真撮影日：' + s_photo_date + '<br>')
-    lst_coord = geometry.get('coordinates')
-    html_content.append('緯度経度：' + str(lst_coord[1]) + ', ' + str(lst_coord[0]) + '<br>')
+
+    html_content.append('緯度経度：' + s_lat + ', ' + s_lon + '<br>')
     html_content.append('所在地：' + s_address + '（' + s_city_code + '）<br>')
     if s_place:
         html_content.append('場所：' + str(s_place) + '<br>')
