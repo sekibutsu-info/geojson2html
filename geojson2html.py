@@ -76,7 +76,9 @@ for feature in geojson_data.get('features', []):
             lst_tags = value
 
     if s_place:
-         s_address2 = s_address + ' ' + str(s_place)
+        s_address2 = s_address + ' ' + str(s_place)
+    else:
+        s_address2 = s_address
     s_title = s_address2 + 'の' + ','.join(lst_types) + ' - みんなで石仏調査アーカイブ'
 
     html_content.extend([
