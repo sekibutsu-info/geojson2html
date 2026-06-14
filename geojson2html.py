@@ -13,8 +13,7 @@ s_url = 'https://archives.sekibutsu.info/'
 for feature in geojson_data.get('features', []):
     properties = feature.get('properties', {})
     geometry = feature.get('geometry', {})
-
-    feature_id = str(properties.get('id'))
+    feature_id = str(feature.get('id'))
 
     html_content = [
         '<!DOCTYPE html>',
